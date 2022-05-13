@@ -1,0 +1,4 @@
+# Kubernetes
+master_ip: "{{ hostvars[groups['master'][0]]['ansible_default_ipv4'].address | default(groups['master'][0]) }}"
+network_dir: /etc/kubernetes/network
+kubeadmin_config: /etc/kubernetes/admin.conf

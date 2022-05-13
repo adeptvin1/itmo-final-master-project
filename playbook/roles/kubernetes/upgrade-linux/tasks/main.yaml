@@ -1,0 +1,8 @@
+---
+  - name: Update apt cache linux distr
+    ansible.builtin.apt:
+      update_cache: yes
+
+  - name: Upgrade linux distr
+    ansible.builtin.apt:
+      upgrade: full

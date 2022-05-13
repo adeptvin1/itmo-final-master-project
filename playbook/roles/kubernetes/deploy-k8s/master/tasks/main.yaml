@@ -1,0 +1,73 @@
+---
+
+- name: Reset Kubernetes component
+  shell: "kubeadm reset --force"
+  register: reset_cluster
+
+- name:
+  shell: kubeadm init  --apiserver-advertise-address={{ api_address | default(ansible_ssh_host)}}
+  register: init_cluster
+  when:
+    - register is succeeded
+
+- name: Create Kubernetes config directory
+  file:
+    path: ".kube/"
+    state: directory
+
+- name: Copy admin.conf to Home directory
+  when: init_cluster is succeeded
+  copy:
+    src: "{{ kubeadmin_config }}"
+    dest: ".kube/config"
+    owner: "{{ ansible_user | default(ansible_user_id) }}"
+    group: "{{ ansible_user | default(ansible_user_id) }}"
+    mode: 0755
+    remote_src: true
+
+
+- name: Enable scheduling on master node
+  command: kubectl taint --kubeconfig={{ kubeadmin_config }} nodes --all node-role.kubernetes.io/master-
+
+- name: Enable and check kubelet service
+  systemd:
+    name: kubelet
+    daemon_reload: yes
+    state: started
+    enabled: yes
+
+- name: Add K8s CA to list of trusted CAs
+  copy:
+    src: /etc/kubernetes/pki/ca.crt
+    dest: /usr/local/share/ca-certificates/kubernetes-ca.crt
+
+- name: Update certificate index
+  shell: /usr/sbin/update-ca-certificates
+
+- name: Restart Docker service
+  systemd:
+    name: docker
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+  register: started_docker
+
+
+- name: Create new token
+  shell: kubeadm token create
+  register: kubeadm_token_output
+
+- name: Save token in kubeadm_token variable
+  set_fact:
+    kubeadm_token: "{{ kubeadm_token_output.stdout }}"
+
+- name: Get Kubernetes CA hash
+  shell: |
+    openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | \
+    openssl rsa -pubin -outform der 2>/dev/null | \
+    openssl dgst -sha256 -hex | sed 's/^.* //'
+  register: kubeadm_hash_output
+
+- name: Save Kubernetes CA hash in kubeadm_hash variable
+  set_fact:
+    kubeadm_hash: "{{ kubeadm_hash_output.stdout }}"
