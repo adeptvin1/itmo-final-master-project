@@ -1,5 +1,6 @@
 - name: Install and init k8s cluster 
   hosts: master
+  become: yes
   roles:
     - role: kubernetes/upgrade-linux
 
@@ -8,6 +9,7 @@
 
 - name: Join in k8s cluster
   hosts: slave
+  become: yes
   roles:
     - role: kubernetes/upgrade-linux
 

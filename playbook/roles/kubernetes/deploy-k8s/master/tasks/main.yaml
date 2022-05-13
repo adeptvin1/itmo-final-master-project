@@ -4,11 +4,11 @@
   shell: "kubeadm reset --force"
   register: reset_cluster
 
-- name:
+- name: Init kubernetes cluster
   shell: kubeadm init  --apiserver-advertise-address={{ api_address | default(ansible_ssh_host)}}
   register: init_cluster
   when:
-    - register is succeeded
+    - reset_cluster is succeeded
 
 - name: Create Kubernetes config directory
   file:

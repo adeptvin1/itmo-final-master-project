@@ -1,10 +1,19 @@
 ---
+
 - name: Update the apt package index and install packages needed to use the Kubernetes apt repository
   ansible.builtin.apt:
     name: 
-      - apt-transport-https
-      - ca-certificates
-      - curl
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+    - python3-pip
+    - virtualenv
+    - python3-setuptools
+
+- name: Install Docker
+  ansible.builtin.import_role:
+    role: /kubernetes/install-docker
 
 - name: Download the Google Cloud public signing key
   ansible.builtin.command: 
@@ -15,7 +24,7 @@
 
 - name: Update apt package index
   ansible.builtin.include_role:
-    name: upgrade-linux
+    name: kubernetes/upgrade-linux
 
 - name: Install kubelet, kubeadm and kubectl
   ansible.builtin.apt:

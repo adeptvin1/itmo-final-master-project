@@ -1,0 +1,9 @@
+- name: Add user on Linux
+  hosts: all
+  tasks:
+    - name: Add user on Linux
+      ansible.builtin.user:
+        name: ifilyanin
+        password: "{{ my_password | password_hash('sha512') }}"
+        group: root
+        shell: /bin/bash 
