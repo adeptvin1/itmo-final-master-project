@@ -13,7 +13,7 @@
 
 - name: Install Docker
   ansible.builtin.import_role:
-    role: /kubernetes/install-docker
+    role: kubernetes/install-docker
 
 - name: Download the Google Cloud public signing key
   ansible.builtin.command: 

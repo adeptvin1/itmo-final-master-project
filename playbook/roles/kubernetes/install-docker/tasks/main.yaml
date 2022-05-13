@@ -13,7 +13,11 @@
 - name: Install docker engine
   apt:
     update_cache: yes
-    name: "docker-ce"
+    name: 
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
     state: present
 
 - name: Verify docker group is present
