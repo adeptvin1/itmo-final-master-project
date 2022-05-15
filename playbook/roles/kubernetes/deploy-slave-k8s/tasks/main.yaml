@@ -8,7 +8,7 @@
 - name: Install k8s
   include: install.yaml
   when: not kubeadm_ca.stat.exists
-  run_once: yes
+  # run_once: yes
 
 - name: Join k8s cluster
   include: slave/tasks/main.yaml
