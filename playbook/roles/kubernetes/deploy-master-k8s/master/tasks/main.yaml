@@ -21,7 +21,6 @@
     src: "{{ kubeadmin_config }}"
     dest: ".kube/config"
     owner: "{{ ansible_user | default(ansible_user_id) }}"
-    group: "{{ ansible_user | default(ansible_user_id) }}"
     mode: 0755
     remote_src: true
 
@@ -40,6 +39,7 @@
   copy:
     src: /etc/kubernetes/pki/ca.crt
     dest: /usr/local/share/ca-certificates/kubernetes-ca.crt
+    remote_src: yes
 
 - name: Update certificate index
   shell: /usr/sbin/update-ca-certificates

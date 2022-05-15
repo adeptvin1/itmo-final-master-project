@@ -9,14 +9,6 @@
   include: install.yaml
   when: not kubeadm_ca.stat.exists
   run_once: yes
-  tags:
-    - master
-    - slave
 
 - name: Init k8s cluster
   include: master/tasks/main.yaml
-  tags: master 
-
-- name: Join k8s cluster
-  include: slave/tasks/main.yaml
-  tags: slave

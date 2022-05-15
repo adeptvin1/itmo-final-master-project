@@ -4,8 +4,8 @@
   roles:
     - role: kubernetes/upgrade-linux
 
-    - role: kubernetes/deploy-k8s
-      tags: master
+    - role: kubernetes/deploy-master-k8s
+
 
 - name: Join in k8s cluster
   hosts: slave
@@ -13,5 +13,4 @@
   roles:
     - role: kubernetes/upgrade-linux
 
-    - role: kubernetes/deploy-k8s
-      tags: slave
+    - role: kubernetes/deploy-slave-k8s

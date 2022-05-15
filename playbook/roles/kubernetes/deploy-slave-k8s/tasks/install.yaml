@@ -1,0 +1,53 @@
+---
+
+- name: Update the apt package index and install packages needed to use the Kubernetes apt repository
+  ansible.builtin.apt:
+    name: 
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+    - python3-pip
+    - virtualenv
+    - python3-setuptools
+
+- name: Install Docker
+  ansible.builtin.import_role:
+    role: kubernetes/install-docker
+
+- name: Download the Google Cloud public signing key
+  ansible.builtin.command: 
+    cmd: sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+- name: Add the Kubernetes apt repository
+  shell: echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+- name: Update apt package index
+  ansible.builtin.include_role:
+    name: kubernetes/upgrade-linux
+
+- name: Install kubelet, kubeadm and kubectl
+  ansible.builtin.apt:
+    name: 
+      - kubelet
+      - kubeadm
+      - kubectl
+
+- name: kubelet service
+  file:
+    path: /etc/systemd/system/kubelet.service.d
+    state: directory
+
+- name: Reload kubelet
+  systemd:
+    name: kubelet
+    daemon_reload: yes
+    state: started
+    enabled: yes
+  register: started_kubelet
+
+- name: Kubectl auto-complete
+  lineinfile:
+    path: "/home/{{ ansible_user }}/.bashrc"
+    line: source <(kubectl completion bash)
+    create: yes
