@@ -10,13 +10,14 @@
     --discovery-token-ca-cert-hash sha256:{{ hostvars[groups['master'][0]]['kubeadm_hash'] }} \
     --node-name {{ node_name }}
   register: join_cluster
-  notify:
-    - Recreate kube-dns
+  # notify:
+  #   - Recreate kube-dns
 
 - name: Add K8s CA to list of trusted CAs
   copy:
     src: /etc/kubernetes/pki/ca.crt
     dest: /usr/local/share/ca-certificates/kubernetes-ca.crt
+    remote_src: yes
 
 - name: Update certificate index
   shell: /usr/sbin/update-ca-certificates

@@ -5,7 +5,7 @@
   register: reset_cluster
 
 - name: Init kubernetes cluster
-  shell: kubeadm init  --apiserver-advertise-address={{ api_address | default(ansible_ssh_host)}}
+  shell: kubeadm init  --apiserver-advertise-address={{ api_address | default(ansible_ssh_host)}} --pod-network-cidr=192.168.0.0/16
   register: init_cluster
   when:
     - reset_cluster is succeeded
@@ -71,3 +71,7 @@
 - name: Save Kubernetes CA hash in kubeadm_hash variable
   set_fact:
     kubeadm_hash: "{{ kubeadm_hash_output.stdout }}"
+
+- name: Install Calico
+  ansible.builtin.import_role:
+    role: kubernetes/install-calico

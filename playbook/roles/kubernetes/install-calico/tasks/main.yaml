@@ -1,0 +1,6 @@
+---
+- name: Deploy tigera operator
+  shell: kubectl create -f https://projectcalico.docs.tigera.io/manifests/tigera-operator.yaml
+
+- name: Deploy Calico custom resource
+  shell: kubectl create -f https://projectcalico.docs.tigera.io/manifests/custom-resources.yaml
