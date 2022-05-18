@@ -14,3 +14,9 @@
     - role: kubernetes/upgrade-linux
 
     - role: kubernetes/deploy-slave-k8s
+
+- name: Deploy Calico
+  hosts: master
+  become: no
+  roles:
+    - role: kubernetes/install-calico

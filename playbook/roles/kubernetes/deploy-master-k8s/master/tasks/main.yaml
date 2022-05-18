@@ -71,7 +71,3 @@
 - name: Save Kubernetes CA hash in kubeadm_hash variable
   set_fact:
     kubeadm_hash: "{{ kubeadm_hash_output.stdout }}"
-
-- name: Install Calico
-  ansible.builtin.import_role:
-    role: kubernetes/install-calico
